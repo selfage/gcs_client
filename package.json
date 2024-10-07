@@ -1,6 +1,6 @@
 {
   "name": "@phading/gcs_client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ProductService",
   "repository": {
     "type": "git",
@@ -15,7 +15,8 @@
   "files": [
     "**/*.d.ts",
     "**/*.js",
-    "**/*.json"
+    "!**/*_test.*",
+    "!test_data/**/*"
   ],
   "devDependencies": {
     "@google-cloud/storage": "^7.13.0",
