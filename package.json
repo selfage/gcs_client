@@ -1,10 +1,10 @@
 {
   "name": "@selfage/gcs_client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Google Cloud Storage client library.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phading-dev/gcs_client.git"
+    "url": "git+https://github.com/selfage/gcs_client.git"
   },
   "keywords": [
     "Google",
@@ -18,9 +18,9 @@
   "author": "Yuxuan Xie <teststaybaka@gmail.com> (http://www.yuxuanxie.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/phading-dev/gcs_client/issues"
+    "url": "https://github.com/selfage/gcs_client/issues"
   },
-  "homepage": "https://github.com/phading-dev/gcs_client#readme",
+  "homepage": "https://github.com/selfage/gcs_client#readme",
   "files": [
     "**/*.d.ts",
     "**/*.js",
