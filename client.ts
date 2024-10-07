@@ -25,6 +25,7 @@ export class CloudStorageClient {
     return new CloudStorageClient(
       new GoogleAuth({
         projectId,
+        scopes: "https://www.googleapis.com/auth/cloud-platform",
       }),
     );
   }
