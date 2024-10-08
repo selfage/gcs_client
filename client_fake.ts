@@ -41,10 +41,16 @@ export class CloudStorageClientFake extends CloudStorageClient {
     resumableUpload: ResumableUpload,
     options?: ResumableUploadOptions,
   ): Promise<UploadedResult | undefined> {
-    await pipeline(
-      body,
-      createWriteStream(path.join(this.localDir, bucketName, filename)),
-    );
+    try {
+      await pipeline(
+        body,
+        createWriteStream(path.join(this.localDir, bucketName, filename)),
+      );
+    } catch (e) {
+      resumableUpload.url = "resume_url";
+      resumableUpload.byteOffset = 1000;
+      return undefined;
+    }
     return {
       md5Hash: "md5Hash",
       crc32c: "crc32c",
