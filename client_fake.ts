@@ -10,6 +10,8 @@ import { Readable } from "stream";
 import { pipeline } from "stream/promises";
 
 export class CloudStorageClientFake extends CloudStorageClient {
+  public destroyBodyError: Error;
+
   public constructor(private localDir: string) {
     super(undefined, undefined);
   }
@@ -41,11 +43,15 @@ export class CloudStorageClientFake extends CloudStorageClient {
     resumableUpload: ResumableUpload,
     options?: ResumableUploadOptions,
   ): Promise<UploadedResult | undefined> {
+    let promise = pipeline(
+      body,
+      createWriteStream(path.join(this.localDir, bucketName, filename)),
+    );
+    if (this.destroyBodyError) {
+      body.destroy(this.destroyBodyError);
+    }
     try {
-      await pipeline(
-        body,
-        createWriteStream(path.join(this.localDir, bucketName, filename)),
-      );
+      await promise;
     } catch (e) {
       resumableUpload.url = "resume_url";
       resumableUpload.byteOffset = 1000;
