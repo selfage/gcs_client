@@ -1,6 +1,6 @@
 {
   "name": "@selfage/gcs_client",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Google Cloud Storage client library.",
   "repository": {
     "type": "git",

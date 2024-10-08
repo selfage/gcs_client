@@ -45,6 +45,7 @@ export class ChunkedUploadStream extends Writable {
       signal: this.abortController.signal,
       body: this.passThough,
     });
+    this.uploadResponse.catch((e) => this.destroy(e));
   }
 
   async _write(
@@ -59,6 +60,7 @@ export class ChunkedUploadStream extends Writable {
       this.passThough.end(chunk.subarray(0, remaining));
       try {
         this.response = await this.uploadResponse;
+        // Upload fully completed. No more bytes are expected.
         callback();
         return;
       } catch (e) {

@@ -76,9 +76,12 @@ export class CloudStorageClient {
       await pipeline(body, chunkedUploadStream);
     } catch (e) {
       options.logFn(
-        `Upload interrupted for file ${filename}. Reason: ${e.message}`,
+        `Upload interrupted for file ${filename}. Reason: ${e.stack}`,
       );
-      if (chunkedUploadStream.range) {
+      if (e.status >= 400 && e.status < 500) {
+        resumableUpload.url = undefined;
+        resumableUpload.byteOffset = undefined;
+      } else if (chunkedUploadStream.range) {
         let matched = CloudStorageClient.EXTRACT_BYTE_OFFSET_REGEX.exec(
           chunkedUploadStream.range,
         );
@@ -103,14 +106,12 @@ export class CloudStorageClient {
     filename: string,
     body: Readable,
     contentType: string,
-    contentLength: number,
   ): Promise<UploadedResult> {
     let response = await this.googleAuth.request({
       method: "POST",
       url: `${this.storageApiDomain}/upload/storage/v1/b/${bucketName}/o?uploadType=media&name=${filename}`,
       headers: {
         "Content-Type": contentType,
-        "Content-Length": contentLength,
       },
       body,
     });

@@ -19,7 +19,6 @@ export class CloudStorageClientFake extends CloudStorageClient {
     filename: string,
     body: Readable,
     contentType: string,
-    contentLength: number,
   ): Promise<UploadedResult> {
     await pipeline(
       body,

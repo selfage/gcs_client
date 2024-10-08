@@ -17,7 +17,6 @@ TEST_RUNNER.run({
       execute: async () => {
         // Prepare
         let client = CloudStorageClient.create();
-        let fileStat = await stat(videoFile);
         let body = createReadStream(videoFile);
 
         // Execute
@@ -26,7 +25,6 @@ TEST_RUNNER.run({
           "singleUploadVideo",
           body,
           "video/mp4",
-          fileStat.size,
         );
 
         // Verify
@@ -97,6 +95,45 @@ TEST_RUNNER.run({
         try {
           await new Storage().bucket(gcsBucket).file("chunkedVideo").delete();
         } catch (e) {}
+      },
+    },
+    {
+      name: "ResumeUploadEncounteredNonRetriableError",
+      execute: async () => {
+        // Prepare
+        let client = CloudStorageClient.create();
+        let chunkSize = 1 * 1024 * 1024;
+        let contentLength = (await stat(videoFile)).size;
+        let body = createReadStream(videoFile);
+        let resumableUpload: ResumableUpload = {
+          url: "https://storage.googleapis.com/upload", // Cannot resume
+          byteOffset: chunkSize,
+        };
+        let infoCaptured: string;
+
+        // Execute
+        let response = await client.resumeUpload(
+          gcsBucket,
+          "willNotUpload",
+          body,
+          "video/mp4",
+          contentLength,
+          resumableUpload,
+          {
+            chunkSize,
+            logFn: (info) => (infoCaptured = info),
+          },
+        );
+
+        // Verify
+        assertThat(resumableUpload.url, eq(undefined), "url cleared");
+        assertThat(
+          resumableUpload.byteOffset,
+          eq(undefined),
+          "byteOffset cleared",
+        );
+        assertThat(infoCaptured, containStr("Upload interrupted"), "info");
+        assertThat(response, eq(undefined), "no response");
       },
     },
   ],
