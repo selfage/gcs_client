@@ -11,6 +11,8 @@ import { pipeline } from "stream/promises";
 
 export class CloudStorageClientFake extends CloudStorageClient {
   public destroyBodyError: Error;
+  public resumeUrl = "resume_url";
+  public resumeByteOffset = 156121;
 
   public constructor(private localDir: string) {
     super(undefined, undefined);
@@ -53,8 +55,8 @@ export class CloudStorageClientFake extends CloudStorageClient {
     try {
       await promise;
     } catch (e) {
-      resumableUpload.url = "resume_url";
-      resumableUpload.byteOffset = 1000;
+      resumableUpload.url = this.resumeUrl;
+      resumableUpload.byteOffset = this.resumeByteOffset;
       return undefined;
     }
     return {
